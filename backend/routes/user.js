@@ -2,7 +2,7 @@ const express = require("express");
 const jwt = require("jsonwebtoken");
 const zod = require("zod");
 const router = express.Router();
-const { User } = require("../db");
+const { User, Account } = require("../db");
 const { authMiddleware } = require("../middleware");
 // router.use(authMiddleware);
 
@@ -22,24 +22,28 @@ router.post("/signup", async (req,res)=>{
     const {success}  = signupSchema.safeParse(body);
     if(!success){
         return res.status(411).json({
-            msg:"Email already taken / Incorrect inputs"
+            msg:"Email already tabhbken / Incorrect inputs"
         })
     }
     const user = User.findOne({
-        username:body.username
+        username:req.body.username
     })
 
     if(user){
         return res.status(411).json({
-            msg:"Email already taken / Incorrect inputs"
+            msg:"Email already takjjjen / Incorrect inputs"
         })
     }
     const dbUser = await User.create({
         username:body.username,
         password:req.body.password,
-        firstname:req.body.firstname,
-        lastname:req.body.lastname
+        firstName:req.body.firstName,
+        lastName:req.body.lastName
     });
+    const accupdate = await Account.create({
+        userId:dbUser._id,
+        balance:1+Math.random()*10000
+    })
     const token = jwt.sign({
         userId:dbUser._id
     },JWT_SECRET)
@@ -88,8 +92,8 @@ router.post("/signin",async (req,res)=>{
 
 const updateSchema = zod.object({
     password:zod.string().min(6),
-    firstname:zod.string(),
-    lastname:zod.string()
+    firstName:zod.string(),
+    lastName:zod.string()
 })
 
 router.put('/',async (req,res)=>{
@@ -123,8 +127,8 @@ router.get('/bulk',async(req,res)=>{
     res.json({
         user:users.map(user=>({
             username:user.username,
-            firstname:user.firstname,
-            lastname:user.lastname,
+            firstName:user.firstName,
+            lastName:user.lastName,
             _id:user._id
         }))
     })
