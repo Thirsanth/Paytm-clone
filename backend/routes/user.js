@@ -12,8 +12,8 @@ const JWT_SECRET = require("../config");
 const signupSchema = zod.object({
     username:zod.string().email(),
     password:zod.string().min(6),
-    firstname:zod.string(),
-    lastname:zod.string()
+    firstName:zod.string(),
+    lastName:zod.string()
 })
 
 router.post("/signup", async (req,res)=>{
@@ -25,7 +25,7 @@ router.post("/signup", async (req,res)=>{
             msg:"Email already tabhbken / Incorrect inputs"
         })
     }
-    const user = User.findOne({
+    const user = await User.findOne({
         username:req.body.username
     })
 
