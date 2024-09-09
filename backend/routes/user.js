@@ -78,7 +78,8 @@ router.post("/signin",async (req,res)=>{
             userId:user._id
         },JWT_SECRET);
         res.status(200).json({
-            token:token
+            token:token,
+            firstName:user.firstName
         })
         return;
     }
@@ -96,7 +97,7 @@ const updateSchema = zod.object({
     lastName:zod.string()
 })
 
-router.put('/',async (req,res)=>{
+router.put('/',authMiddleware,async (req,res)=>{
     const body = req.body;
     const {success} = updateSchema.safeParse(body);
     if(!success){
